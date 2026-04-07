@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omega AI - Optimal Multitasking Enhanced Guidance Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            width: 95%;
+            max-width: 900px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 25px 25px 0 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .omega-icon {
+            font-size: 3.5em;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .header-subtitle {
+            font-size: 0.95em;
+            opacity: 0.95;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .builder-credit {
+            font-size: 0.85em;
+            opacity: 0.85;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #f0f1f5 100%);
+            scroll-behavior: smooth;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 18px;
+            padding: 15px 18px;
+            border-radius: 18px;
+            max-width: 75%;
+            word-wrap: break-word;
+            animation: messageAppear 0.4s ease-out;
+            line-height: 1.5;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+            text-align: right;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .omega-message {
+            background: white;
+            color: #333;
+            border: 1.5px solid #e9ecef;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .message strong {
+            font-weight: 600;
+            color: inherit;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 18px;
+            background: white;
+            border: 1.5px solid #e9ecef;
+            border-radius: 18px;
+            width: fit-content;
+            color: #667eea;
+            font-style: italic;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .input-section {
+            padding: 20px 25px;
+            background: white;
+            border-top: 2px solid #e9ecef;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        #message-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        #message-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        #send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 28px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        #send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #voice-button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 14px 25px;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        #image-button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 14px 25px;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        #image-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        #voice-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        #voice-button.recording {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            animation: pulse-button 0.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse-button {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1.5px solid #ef5350;
+        }
+
+        .voice-icon {
+            font-size: 1.2em;
+        }
+
+        .clear-button {
+            background: #f5f5f5;
+            color: #666;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            font-size: 14px;
+        }
+
+        .clear-button:hover {
+            background: #efefef;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                height: 90vh;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 15px;
+                border-radius: 15px 15px 0 0;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 12px 15px;
+            }
+
+            .input-section {
+                flex-direction: column;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .button-group {
+                width: 100%;
+            }
+
+            button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <div class="omega-icon">Ω</div>
+                <div>
+                    <h1>OMEGA</h1>
+                </div>
+            </div>
+            <div class="header-subtitle">Optimal Multitasking Enhanced Guidance Assistant</div>
+            <div class="builder-credit">Built by pkd sathaan (mufaad)</div>
+        </div>
+
+        <div class="chat-container" id="chat-container">
+            <div class="message omega-message">
+                <strong>Omega:</strong> Hey there! I'm Omega, your Optimal Multitasking Enhanced Guidance Assistant. Ready to help with anything! Type your message or use the voice button. 🎤
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing-indicator">Omega is thinking...</div>
+
+    <div class="input-section">
+            <div class="input-wrapper">
+                <input type="text" id="message-input" placeholder="Type your message or click the microphone..." maxlength="2000">
+            </div>
+            
+            <input type="file" id="image-input" accept="image/*" style="display: none;">
+            <textarea id="image-question" placeholder="Ask about the image..." style="display: none; width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #e9ecef; font-family: inherit; resize: none; height: 50px;"></textarea>
+            
+            <div class="button-group">
+                <button id="image-button" title="Upload image">
+                    <span>🖼️</span>
+                    <span>Image</span>
+                </button>
+                <button id="voice-button" title="Voice mode - click to speak">
+                    <span class="voice-icon">🎤</span>
+                    <span>Voice</span>
+                </button>
+                <button id="send-button" title="Send message">
+                    <span>→</span>
+                </button>
+                <button id="clear-button" class="clear-button" title="Clear chat">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Speech Recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        // Initialize Speech Synthesis
+        const synth = window.speechSynthesis;
+
+        // DOM Elements
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const imageInput = document.getElementById('image-input');
+        const imageButton = document.getElementById('image-button');
+        const sendButton = document.getElementById('send-button');
+        const voiceButton = document.getElementById('voice-button');
+        const clearButton = document.getElementById('clear-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+
+        let isRecording = false;
+        let voiceOnlyMode = false;
+
+        // Add Message
+        function addMessage(content, isUser = false, isError = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'omega-message'} ${isError ? 'error' : ''}`;
+            messageDiv.innerHTML = `<strong>${isUser ? 'You' : 'Omega'}:</strong> ${escapeHtml(content)}`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addImageDisplay(src) {
+            const imageDiv = document.createElement('div');
+            imageDiv.style.marginBottom = '15px';
+            imageDiv.style.textAlign = 'center';
+            const img = document.createElement('img');
+            img.src = src;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '300px';
+            img.style.borderRadius = '10px';
+            imageDiv.appendChild(img);
+            chatContainer.appendChild(imageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        // Send Text Message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            messageInput.value = '';
+            sendButton.disabled = true;
+            voiceButton.disabled = true;
+            imageButton.disabled = true;
+            showTyping();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    addMessage(data.response);
+                    speakResponse(data.response);
+                } else {
+                    addMessage(data.error || 'An error occurred', false, true);
+                }
+            } catch (error) {
+                addMessage('Network error. Please try again.', false, true);
+            } finally {
+                hideTyping();
+                sendButton.disabled = false;
+                voiceButton.disabled = false;
+                imageButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        // Image Upload Handler
+        imageButton.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        imageInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                addImageDisplay(event.target.result);
+            };
+            reader.readAsDataURL(file);
+
+            // Ask about the image
+            const question = prompt('What would you like to ask about this image?', 'What do you see in this image?');
+            if (!question) return;
+
+            sendButton.disabled = true;
+            voiceButton.disabled = true;
+            imageButton.disabled = true;
+            showTyping();
+
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('question', question);
+
+            try {
+                const response = await fetch('/api/analyze-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    addMessage(data.response);
+                    speakResponse(data.response);
+                } else {
+                    addMessage(data.error || 'Error analyzing image', false, true);
+                }
+            } catch (error) {
+                addMessage('Network error analyzing image.', false, true);
+            } finally {
+                hideTyping();
+                sendButton.disabled = false;
+                voiceButton.disabled = false;
+                imageButton.disabled = false;
+                imageInput.value = '';
+            }
+        });
+
+        // Voice Recognition - Smart Mode
+        voiceButton.addEventListener('click', () => {
+            voiceOnlyMode = !voiceOnlyMode;
+            
+            if (voiceOnlyMode) {
+                isRecording = true;
+                voiceButton.classList.add('recording');
+                voiceButton.textContent = '🎤 Listening...';
+                recognition.start();
+            } else {
+                isRecording = false;
+                voiceButton.classList.remove('recording');
+                voiceButton.innerHTML = '<span class="voice-icon">🎤</span><span>Voice</span>';
+                recognition.stop();
+            }
+        });
+
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            
+            if (event.results[event.results.length - 1].isFinal) {
+                if (voiceOnlyMode) {
+                    // Voice-only mode: don't show text, just process
+                    sendVoiceMessage(transcript);
+                } else {
+                    // Text mode: show in input
+                    messageInput.value = transcript;
+                }
+            }
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            voiceButton.classList.remove('recording');
+            voiceButton.innerHTML = '<span class="voice-icon">🎤</span><span>Voice</span>';
+            voiceOnlyMode = false;
+        };
+
+        async function sendVoiceMessage(message) {
+            if (!message.trim()) return;
+
+            sendButton.disabled = true;
+            voiceButton.disabled = true;
+            imageButton.disabled = true;
+            showTyping();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Voice-only mode: just speak the response
+                    synth.cancel();
+                    const utterance = new SpeechSynthesisUtterance(data.response);
+                    utterance.rate = 0.95;
+                    utterance.pitch = 1;
+                    utterance.volume = 1;
+                    synth.speak(utterance);
+                } else {
+                    speakResponse(data.error || 'An error occurred');
+                }
+            } catch (error) {
+                speakResponse('Network error. Please try again.');
+            } finally {
+                hideTyping();
+                sendButton.disabled = false;
+                voiceButton.disabled = false;
+                imageButton.disabled = false;
+            }
+        }
+
+        // Text to Speech
+        function speakResponse(text) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.95;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            synth.speak(utterance);
+        }
+
+        // Clear Chat
+        clearButton.addEventListener('click', () => {
+            if (confirm('Clear all messages?')) {
+                fetch('/api/clear', { method: 'POST' });
+                chatContainer.innerHTML = '<div class="message omega-message"><strong>Omega:</strong> Chat cleared! Ready for a fresh conversation.</div>';
+            }
+        });
+
+        // Event Listeners
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !sendButton.disabled) {
+                sendMessage();
+            }
+        });
+
+        // Focus on load
+        messageInput.focus();
+    </script>
+</body>
+</html>
